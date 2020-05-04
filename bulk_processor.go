@@ -29,7 +29,7 @@ type BulkProcessor struct {
 	stopReconnC chan struct{}
 }
 
-func newBulkProcessor(
+func NewBulkProcessor(
 	client *Client,
 	name string,
 	db string,
