@@ -2,6 +2,7 @@ package dorisloader
 
 import (
 	"context"
+	"errors"
 	"sync"
 	"time"
 )
@@ -58,6 +59,10 @@ func (p *BulkProcessor) Start(ctx context.Context) error {
 	p.startedMu.Lock()
 	defer p.startedMu.Unlock()
 
+	if err := p.checkInterval(); err != nil {
+		return err
+	}
+
 	if p.started {
 		return nil
 	}
@@ -86,6 +91,15 @@ func (p *BulkProcessor) Start(ctx context.Context) error {
 	}
 
 	p.started = true
+
+	return nil
+}
+
+func (p *BulkProcessor) checkInterval() error {
+
+	if p.bulkActions == 0 && p.bulkSize == 0 && p.flushInterval == 0 {
+		return errors.New("bulk actions and bulk size and flush interval all is nil(0)")
+	}
 
 	return nil
 }

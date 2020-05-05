@@ -102,10 +102,10 @@ func (w *bulkWorker) commit(ctx context.Context) error {
 }
 
 func (w *bulkWorker) commitRequired() bool {
-	if w.bulkActions >= 0 && w.service.NumberOfRows() >= w.bulkActions {
+	if w.bulkActions > 0 && w.service.NumberOfRows() >= w.bulkActions {
 		return true
 	}
-	if w.bulkSize >= 0 && w.service.EstimatedSizeInBytes() >= int64(w.bulkSize) {
+	if w.bulkSize > 0 && w.service.EstimatedSizeInBytes() >= int64(w.bulkSize) {
 		return true
 	}
 	return false
