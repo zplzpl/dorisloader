@@ -25,6 +25,7 @@ type Client struct {
 	basicAuthPassword string       // password for HTTP Basic Auth
 	headers           http.Header  // a list of default headers to add to each request
 	decoder           Decoder
+	debug             bool
 }
 
 func NewClient(feUrl string, options ...ClientOptionFunc) (*Client, error) {
@@ -64,6 +65,14 @@ func SetHttpClient(httpClient Doer) ClientOptionFunc {
 		} else {
 			c.c = http.DefaultClient
 		}
+		return nil
+	}
+}
+
+// SetHttpClient can be used to specify the http.Client to use when making
+func SetDebug(debug bool) ClientOptionFunc {
+	return func(c *Client) error {
+		c.debug = debug
 		return nil
 	}
 }
@@ -218,6 +227,10 @@ func (c *Client) newResponse(res *http.Response) (*Response, error) {
 
 // dumpRequest dumps the given HTTP request to the trace log.
 func (c *Client) dumpRequest(r *http.Request) {
+	if !c.debug {
+		return
+	}
+
 	out, err := httputil.DumpRequestOut(r, true)
 	if err == nil {
 		log.Println(string(out))
